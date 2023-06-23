@@ -58,7 +58,7 @@ class Cooldown(Plugin):
 
         if is_admin:
             if e_context["context"].type == ContextType.TEXT:
-                content = e_context["context"].content
+                content = e_context["context"].content.strip()
                 if content.startswith("$"):
                     cmds = content[1:].split()
                     if len(cmds) == 2 and cmds[0] == "setcd":
@@ -79,10 +79,10 @@ class Cooldown(Plugin):
         if self.action == "reset":
             self.last_time[e_context["context"]["receiver"]] = current_time
 
-        if delta < self.cd:
+        if delta <= self.cd:
             if not (self.admin_ignore and is_admin):
                 if "group" in self.env and in_group or "single" in self.env and in_single:
-                    reply = Reply(ReplyType.TEXT, "冷却中喵~还剩{}秒".format(int(self.cd - delta)))
+                    reply = Reply(ReplyType.TEXT, "冷却中，还剩{}秒喵~".format(int(self.cd - delta)))
                     e_context["reply"] = reply
                     e_context.action = EventAction.BREAK_PASS
                     return
@@ -91,7 +91,7 @@ class Cooldown(Plugin):
             self.last_time[e_context["context"]["receiver"]] = current_time
 
         if e_context["context"].type == ContextType.TEXT:
-            content = e_context["context"].content
+            content = e_context["context"].content.strip()
             if content.startswith("$"):
                 cmds = content[1:].split()
                 if len(cmds) == 1 and cmds[0] == "getcd":

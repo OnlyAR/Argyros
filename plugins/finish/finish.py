@@ -32,7 +32,7 @@ class Finish(Plugin):
         if content.startswith(trigger_prefix):
             reply = Reply()
             reply.type = ReplyType.ERROR
-            reply.content = "未知插件命令\n查看插件命令列表请输入#help 插件名\n"
+            reply.content = "主人在说什么，Argyros听不懂喵\n输入 #help 查看帮助喵"
             e_context["reply"] = reply
             e_context.action = EventAction.BREAK_PASS  # 事件结束，并跳过处理context的默认逻辑
 

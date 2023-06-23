@@ -132,7 +132,7 @@ ADMIN_COMMANDS = {
 
 # 定义帮助函数
 def get_help_text(isadmin, isgroup):
-    help_text = "通用指令：\n"
+    help_text = "以下是Argyros支持的指令喵~\n"
     for cmd, info in COMMANDS.items():
         if cmd == "auth":  # 不提示认证指令
             continue
@@ -151,7 +151,7 @@ def get_help_text(isadmin, isgroup):
     for plugin in plugins:
         if plugins[plugin].enabled and not plugins[plugin].hidden:
             namecn = plugins[plugin].namecn
-            help_text += "\n%s:" % namecn
+            help_text += "\n%s : " % namecn
             help_text += PluginManager().instances[plugin].get_help_text(verbose=False).strip()
 
     if ADMIN_COMMANDS and isadmin:
@@ -214,13 +214,13 @@ class Godcmd(Plugin):
                 e_context.action = EventAction.BREAK_PASS
             return
 
-        content = e_context["context"].content
+        content = e_context["context"].content.strip()
         logger.debug("[Godcmd] on_handle_context. content: %s" % content)
         if content.startswith("#"):
             if len(content) == 1:
                 reply = Reply()
                 reply.type = ReplyType.ERROR
-                reply.content = f"空指令，输入#help查看指令列表\n"
+                reply.content = f"这是空指令，输入 #help 查看指令列表喵~"
                 e_context["reply"] = reply
                 e_context.action = EventAction.BREAK_PASS
                 return
@@ -259,7 +259,7 @@ class Godcmd(Plugin):
                                 ok, result = True, PluginManager().instances[name].get_help_text(isgroup=isgroup, isadmin=isadmin, verbose=True)
                                 break
                         if not ok:
-                            result = "插件不存在或未启用"
+                            result = "插件不存在或未启用喵~"
                 elif cmd == "id":
                     ok, result = True, user
                 # elif cmd == "set_openai_api_key":
@@ -406,10 +406,10 @@ class Godcmd(Plugin):
 
             reply = Reply()
             if ok:
-                reply.type = ReplyType.INFO
+                reply.type = ReplyType.TEXT
             else:
                 reply.type = ReplyType.ERROR
-            reply.content = result
+            reply.content = result.strip()
             e_context["reply"] = reply
 
             e_context.action = EventAction.BREAK_PASS  # 事件结束，并跳过处理context的默认逻辑
