@@ -19,9 +19,11 @@ plugins/**/
 !plugins/dungeon
 !plugins/finish
 !plugins/godcmd
+!plugins/cooldown
+!plugins/neko
 !plugins/tool
 !plugins/banwords
 !plugins/banwords/**/
-!plugins/hello
+!plugins/hello_n
 !plugins/role
 !plugins/keyword

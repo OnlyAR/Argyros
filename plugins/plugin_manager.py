@@ -31,11 +31,11 @@ class PluginManager:
             plugincls.desc = kwargs.get("desc")
             plugincls.author = kwargs.get("author")
             plugincls.path = self.current_plugin_path
-            plugincls.version = kwargs.get("version") if kwargs.get("version") != None else "1.0"
-            plugincls.namecn = kwargs.get("namecn") if kwargs.get("namecn") != None else name
-            plugincls.hidden = kwargs.get("hidden") if kwargs.get("hidden") != None else False
+            plugincls.version = kwargs.get("version") if kwargs.get("version") is not None else "1.0"
+            plugincls.namecn = kwargs.get("namecn") if kwargs.get("name") != None else name
+            plugincls.hidden = kwargs.get("hidden") if kwargs.get("hidden") is not None else False
             plugincls.enabled = True
-            if self.current_plugin_path == None:
+            if self.current_plugin_path is None:
                 raise Exception("Plugin path not set")
             self.plugins[name.upper()] = plugincls
             logger.info("Plugin %s_v%s registered, path=%s" % (name, plugincls.version, plugincls.path))
@@ -80,7 +80,8 @@ class PluginManager:
                             if self.loaded[plugin_path] == None:
                                 logger.info("reload module %s" % plugin_name)
                                 self.loaded[plugin_path] = importlib.reload(sys.modules[import_path])
-                                dependent_module_names = [name for name in sys.modules.keys() if name.startswith(import_path + ".")]
+                                dependent_module_names = [name for name in sys.modules.keys() if
+                                                          name.startswith(import_path + ".")]
                                 for name in dependent_module_names:
                                     logger.info("reload module %s" % name)
                                     importlib.reload(sys.modules[name])

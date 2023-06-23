@@ -1,0 +1,6 @@
+{
+  "action": "reset",
+  "env": ["group", "single"],
+  "admin_ignore": true,
+  "cd": 30
+}

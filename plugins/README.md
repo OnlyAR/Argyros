@@ -207,7 +207,7 @@ from .hello import *
 PS: `ON_HANDLE_CONTEXT`是最常用的事件，如果要根据不同的消息来生成回复，就用它。
 
 ```python
-@plugins.register(name="Hello", desc="A simple plugin that says hello", version="0.1", author="lanvent", desire_priority= -1)
+@plugins.register(name="Hello", desc="A simple plugin that says hello_n", version="0.1", author="lanvent", desire_priority= -1)
 class Hello(Plugin):
     def __init__(self):
         super().__init__()

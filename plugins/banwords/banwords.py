@@ -9,8 +9,6 @@ from bridge.reply import Reply, ReplyType
 from common.log import logger
 from plugins import *
 
-from .lib.WordsSearch import WordsSearch
-
 
 @plugins.register(
     name="Banwords",
@@ -21,6 +19,7 @@ from .lib.WordsSearch import WordsSearch
     author="lanvent",
 )
 class Banwords(Plugin):
+
     def __init__(self):
         super().__init__()
         try:
@@ -29,28 +28,29 @@ class Banwords(Plugin):
             conf = None
             if not os.path.exists(config_path):
                 conf = {"action": "ignore"}
-                with open(config_path, "w") as f:
+                with open(config_path, "w", encoding="utf8") as f:
                     json.dump(conf, f, indent=4)
             else:
-                with open(config_path, "r") as f:
+                with open(config_path, "r", encoding="utf8") as f:
                     conf = json.load(f)
-            self.searchr = WordsSearch()
             self.action = conf["action"]
-            banwords_path = os.path.join(curdir, "banwords.txt")
-            with open(banwords_path, "r", encoding="utf-8") as f:
-                words = []
-                for line in f:
-                    word = line.strip()
-                    if word:
-                        words.append(word)
-            self.searchr.SetKeywords(words)
+            # 修改设置，违禁词从config.json中读取
+            # banwords_path = os.path.join(curdir, "banwords.txt")
+            with open(config_path, "r", encoding="utf-8") as f:
+                # words = []
+                # for line in f:
+                #     word = line.strip()
+                #     if word:
+                #         words.append(word)
+                self.words = conf["word_group"]
             self.handlers[Event.ON_HANDLE_CONTEXT] = self.on_handle_context
             if conf.get("reply_filter", True):
                 self.handlers[Event.ON_DECORATE_REPLY] = self.on_decorate_reply
                 self.reply_action = conf.get("reply_action", "ignore")
             logger.info("[Banwords] inited")
         except Exception as e:
-            logger.warn("[Banwords] init failed, ignore or see https://github.com/zhayujie/chatgpt-on-wechat/tree/master/plugins/banwords .")
+            logger.warn(
+                "[Banwords] init failed, ignore or see https://github.com/zhayujie/chatgpt-on-wechat/tree/master/plugins/banwords .")
             raise e
 
     def on_handle_context(self, e_context: EventContext):
@@ -60,17 +60,21 @@ class Banwords(Plugin):
         ]:
             return
 
+        if not e_context["context"].get("isgroup", False):
+            return
+
         content = e_context["context"].content
         logger.debug("[Banwords] on_handle_context. content: %s" % content)
         if self.action == "ignore":
-            f = self.searchr.FindFirst(content)
-            if f:
-                logger.info("[Banwords] %s in message" % f["Keyword"])
+            msg = self._get_forbid_result(content)
+            if msg is not None:
+                logger.info("[Banwords] %s in message" % msg)
                 e_context.action = EventAction.BREAK_PASS
                 return
         elif self.action == "replace":
-            if self.searchr.ContainsAny(content):
-                reply = Reply(ReplyType.INFO, "发言中包含敏感词，请重试: \n" + self.searchr.Replace(content))
+            msg = self._get_forbid_result(content)
+            if msg is not None:
+                reply = Reply(ReplyType.TEXT, msg)
                 e_context["reply"] = reply
                 e_context.action = EventAction.BREAK_PASS
                 return
@@ -79,21 +83,32 @@ class Banwords(Plugin):
         if e_context["reply"].type not in [ReplyType.TEXT]:
             return
 
+        if not e_context["context"].get("isgroup", False):
+            return
+
         reply = e_context["reply"]
         content = reply.content
         if self.reply_action == "ignore":
-            f = self.searchr.FindFirst(content)
-            if f:
-                logger.info("[Banwords] %s in reply" % f["Keyword"])
+            msg = self._get_forbid_result(content)
+            if msg is not None:
+                logger.info("[Banwords] %s in message" % msg)
                 e_context["reply"] = None
                 e_context.action = EventAction.BREAK_PASS
                 return
         elif self.reply_action == "replace":
             if self.searchr.ContainsAny(content):
-                reply = Reply(ReplyType.INFO, "已替换回复中的敏感词: \n" + self.searchr.Replace(content))
+                msg = self._get_forbid_result(content)
+                reply = Reply(ReplyType.TEXT, msg)
                 e_context["reply"] = reply
-                e_context.action = EventAction.CONTINUE
+                e_context.action = EventAction.BREAK_PASS
                 return
 
     def get_help_text(self, **kwargs):
         return "过滤消息中的敏感词。"
+
+    def _get_forbid_result(self, content: str):
+        for key, item in self.words.items():
+            for word in item['words']:
+                if word in content:
+                    return item['reply']
+        return None

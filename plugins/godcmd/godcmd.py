@@ -32,23 +32,23 @@ COMMANDS = {
         "args": ["口令"],
         "desc": "管理员认证",
     },
-    "set_openai_api_key": {
-        "alias": ["set_openai_api_key"],
-        "args": ["api_key"],
-        "desc": "设置你的OpenAI私有api_key",
-    },
-    "reset_openai_api_key": {
-        "alias": ["reset_openai_api_key"],
-        "desc": "重置为默认的api_key",
-    },
-    "set_gpt_model": {
-        "alias": ["set_gpt_model"],
-        "desc": "设置你的私有模型",
-    },
-    "reset_gpt_model": {
-        "alias": ["reset_gpt_model"],
-        "desc": "重置你的私有模型",
-    },
+    # "set_openai_api_key": {
+    #     "alias": ["set_openai_api_key"],
+    #     "args": ["api_key"],
+    #     "desc": "设置你的OpenAI私有api_key",
+    # },
+    # "reset_openai_api_key": {
+    #     "alias": ["reset_openai_api_key"],
+    #     "desc": "重置为默认的api_key",
+    # },
+    # "set_gpt_model": {
+    #     "alias": ["set_gpt_model"],
+    #     "desc": "设置你的私有模型",
+    # },
+    # "reset_gpt_model": {
+    #     "alias": ["reset_gpt_model"],
+    #     "desc": "重置你的私有模型",
+    # },
     "gpt_model": {
         "alias": ["gpt_model"],
         "desc": "查询你使用的模型",
@@ -163,7 +163,7 @@ def get_help_text(isadmin, isgroup):
                 args = [a for a in info["args"]]
                 help_text += f"{' '.join(args)}"
             help_text += f": {info['desc']}\n"
-    return help_text
+    return help_text.strip()
 
 
 @plugins.register(
@@ -262,40 +262,40 @@ class Godcmd(Plugin):
                             result = "插件不存在或未启用"
                 elif cmd == "id":
                     ok, result = True, user
-                elif cmd == "set_openai_api_key":
-                    if len(args) == 1:
-                        user_data = conf().get_user_data(user)
-                        user_data["openai_api_key"] = args[0]
-                        ok, result = True, "你的OpenAI私有api_key已设置为" + args[0]
-                    else:
-                        ok, result = False, "请提供一个api_key"
-                elif cmd == "reset_openai_api_key":
-                    try:
-                        user_data = conf().get_user_data(user)
-                        user_data.pop("openai_api_key")
-                        ok, result = True, "你的OpenAI私有api_key已清除"
-                    except Exception as e:
-                        ok, result = False, "你没有设置私有api_key"
-                elif cmd == "set_gpt_model":
-                    if len(args) == 1:
-                        user_data = conf().get_user_data(user)
-                        user_data["gpt_model"] = args[0]
-                        ok, result = True, "你的GPT模型已设置为" + args[0]
-                    else:
-                        ok, result = False, "请提供一个GPT模型"
+                # elif cmd == "set_openai_api_key":
+                #     if len(args) == 1:
+                #         user_data = conf().get_user_data(user)
+                #         user_data["openai_api_key"] = args[0]
+                #         ok, result = True, "你的OpenAI私有api_key已设置为" + args[0]
+                #     else:
+                #         ok, result = False, "请提供一个api_key"
+                # elif cmd == "reset_openai_api_key":
+                #     try:
+                #         user_data = conf().get_user_data(user)
+                #         user_data.pop("openai_api_key")
+                #         ok, result = True, "你的OpenAI私有api_key已清除"
+                #     except Exception as e:
+                #         ok, result = False, "你没有设置私有api_key"
+                # elif cmd == "set_gpt_model":
+                #     if len(args) == 1:
+                #         user_data = conf().get_user_data(user)
+                #         user_data["gpt_model"] = args[0]
+                #         ok, result = True, "你的GPT模型已设置为" + args[0]
+                #     else:
+                #         ok, result = False, "请提供一个GPT模型"
                 elif cmd == "gpt_model":
                     user_data = conf().get_user_data(user)
                     model = conf().get("model")
                     if "gpt_model" in user_data:
                         model = user_data["gpt_model"]
                     ok, result = True, "你的GPT模型为" + str(model)
-                elif cmd == "reset_gpt_model":
-                    try:
-                        user_data = conf().get_user_data(user)
-                        user_data.pop("gpt_model")
-                        ok, result = True, "你的GPT模型已重置"
-                    except Exception as e:
-                        ok, result = False, "你没有设置私有GPT模型"
+                # elif cmd == "reset_gpt_model":
+                #     try:
+                #         user_data = conf().get_user_data(user)
+                #         user_data.pop("gpt_model")
+                #         ok, result = True, "你的GPT模型已重置"
+                #     except Exception as e:
+                #         ok, result = False, "你没有设置私有GPT模型"
                 elif cmd == "reset":
                     if bottype in [const.OPEN_AI, const.CHATGPT, const.CHATGPTONAZURE, const.LINKAI]:
                         bot.sessions.clear_session(session_id)
