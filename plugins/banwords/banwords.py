@@ -96,9 +96,9 @@ class Banwords(Plugin):
                 e_context.action = EventAction.BREAK_PASS
                 return
         elif self.reply_action == "replace":
-            if self.searchr.ContainsAny(content):
-                msg = self._get_forbid_result(content)
-                reply = Reply(ReplyType.TEXT, msg)
+            msg = self._get_forbid_result(content)
+            if msg is not None:
+                reply = Reply(ReplyType.TEXT, content.split()[0] + " " + msg)
                 e_context["reply"] = reply
                 e_context.action = EventAction.BREAK_PASS
                 return

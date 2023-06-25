@@ -16,7 +16,6 @@ user_datas.pkl
 chatgpt_tool_hub/
 plugins/**/
 !plugins/bdunit
-!plugins/dungeon
 !plugins/finish
 !plugins/godcmd
 !plugins/cooldown
@@ -24,6 +23,5 @@ plugins/**/
 !plugins/tool
 !plugins/banwords
 !plugins/banwords/**/
-!plugins/hello_n
-!plugins/role
+!plugins/quote
 !plugins/keyword

@@ -51,6 +51,11 @@ class Cooldown(Plugin):
             raise e
 
     def on_handle_context(self, e_context: EventContext):
+        # 拦截所有非文本消息
+        if e_context["context"].type != ContextType.TEXT:
+            e_context["reply"] = None
+            e_context.action = EventAction.BREAK_PASS
+            return
         in_group = not e_context["context"].get("isgroup", False)
         in_single = not in_group
         admin_list = PluginManager().instances["GODCMD"].admin_users
