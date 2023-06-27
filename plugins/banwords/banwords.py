@@ -93,14 +93,14 @@ class Banwords(Plugin):
             if msg is not None:
                 logger.info("[Banwords] %s in message" % msg)
                 e_context["reply"] = None
-                e_context.action = EventAction.BREAK_PASS
+                e_context.action = EventAction.BREAK
                 return
         elif self.reply_action == "replace":
             msg = self._get_forbid_result(content)
             if msg is not None:
-                reply = Reply(ReplyType.TEXT, content.split()[0] + " " + msg)
+                reply = Reply(ReplyType.TEXT, msg)
                 e_context["reply"] = reply
-                e_context.action = EventAction.BREAK_PASS
+                e_context.action = EventAction.BREAK
                 return
 
     def get_help_text(self, **kwargs):
